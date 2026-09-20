@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bean Converter</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-shadow: 2px 2px 12px rgba(0,0,0,0.1);
+            background-color: #fcfbfa;
+        }
+        h2 {
+            color: #5c4033;
+            text-align: center;
+        }
+        label {
+            font-weight: bold;
+            color: #4a3525;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0 20px 0;
+            box-sizing: border-box;
+            border: 1px solid #a67c52;
+            border-radius: 4px;
+        }
+        .result {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #2e1f15;
+            margin-top: 15px;
+            text-align: center;
+            background-color: #f0e6df;
+            padding: 15px;
+            border-radius: 6px;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>🫘 Bean Converter</h2>
+    
+    <label for="conversionType">Conversion Mode:</label>
+    <select id="conversionType" onchange="convert()">
+        <option value="multiplyThreeToOne">Multiply (3 → 1)</option>
+        <option value="divideOneToThree">Divide (1 → 3)</option>
+    </select>
+
+    <label for="inputValue">Enter Beans / Value:</label>
+    <input type="number" id="inputValue" placeholder="Type a number..." oninput="convert()">
+
+    <div class="result">
+        Result: <span id="outputValue">0</span>
+    </div>
+
+    <script>
+        function convert() {
+            const input = parseFloat(document.getElementById('inputValue').value);
+            const type = document.getElementById('conversionType').value;
+            const output = document.getElementById('outputValue');
+
+            if (isNaN(input)) {
+                output.innerText = '0';
+                return;
+            }
+
+            // Calculations are reversed based on your request
+            if (type === 'multiplyThreeToOne') {
+                output.innerText = (input * 3).toFixed(2).replace(/\.00$/, '');
+            } else {
+                output.innerText = (input / 3).toFixed(2).replace(/\.00$/, '');
+            }
+        }
+    </script>
+
+</body>
+</html>
