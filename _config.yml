@@ -1,3 +1,18 @@
-theme: jekyll-theme-minimal
-title: BEAN CONVERTER
-description: This easily converts Money into Beans.
+# Tuner config
+# Put this file in the same folder as index.html. Every time the app opens,
+# it adds the channels and playlists below, so your list is the same on every device.
+# Streams must start with http:// or https://
+
+# Playlist links (M3U / M3U8). All their channels are added.
+playlists:
+  - https://example.com/my-playlist.m3u
+
+# Individual channels.
+channels:
+  - name: Example News
+    url: https://example.com/news/index.m3u8
+    group: News
+    fav: true
+  - name: Example Sports
+    url: https://example.com/sports/index.m3u8
+    group: Sports
