@@ -1,338 +1,246 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bean Converter</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #fcfbfa;
-            overflow-x: hidden;
-            min-height: 100vh;
-            user-select: none;
-        }
-        
-        /* Floating Bean Background Styles */
-        .falling-bean {
-            position: fixed;
-            top: -50px;
-            font-size: 28px;
-            cursor: pointer;
-            z-index: 10;
-            animation: fall linear infinite, spin linear infinite;
-            transition: transform 0.1s ease;
-        }
-        .falling-bean:active {
-            transform: scale(1.4);
-        }
-
-        @keyframes fall {
-            0% { top: -50px; opacity: 0; }
-            10% { opacity: 0.8; }
-            90% { opacity: 0.8; }
-            100% { top: 105vh; opacity: 0; }
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* Score Tracker Overlay */
-        #scoreBoard {
-            position: fixed;
-            top: 15px;
-            left: 15px;
-            background: rgba(92, 64, 51, 0.9);
-            color: #fff;
-            padding: 10px 15px;
-            border-radius: 20px;
-            font-weight: bold;
-            font-size: 1.1em;
-            z-index: 100;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-
-        /* View Switching Logic */
-        .page {
-            display: none;
-            padding: 20px;
-            box-sizing: border-box;
-        }
-        .page.active {
-            display: block;
-        }
-
-        /* --- CONVERTER VIEW --- */
-        #converterView {
-            max-width: 400px;
-            margin: 60px auto;
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            box-shadow: 2px 2px 12px rgba(0,0,0,0.1);
-            background: rgba(252, 251, 250, 0.95);
-            position: relative;
-            z-index: 5;
-        }
-        h2 { color: #5c4033; text-align: center; margin-top: 10px; }
-        label { font-weight: bold; color: #4a3525; }
-        input, select {
-            width: 100%; padding: 10px; margin: 10px 0 20px 0;
-            box-sizing: border-box; border: 1px solid #a67c52; border-radius: 4px;
-        }
-        .result {
-            font-size: 1.3em; font-weight: bold; color: #2e1f15; text-align: center;
-            background-color: #f0e6df; padding: 15px; border-radius: 6px;
-        }
-
-        /* --- GAME ARCADE VIEW --- */
-        #gameView {
-            max-width: 600px;
-            margin: 60px auto;
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 12px;
-            padding: 30px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
-            text-align: center;
-            border: 2px solid #5c4033;
-            position: relative;
-        }
-        .game-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-            margin-top: 25px;
-            margin-bottom: 25px;
-        }
-        .game-btn {
-            background-color: #5c4033;
-            color: #fff;
-            padding: 20px;
-            border: none;
-            border-radius: 8px;
-            font-size: 1.2em;
-            font-weight: bold;
-            cursor: pointer;
-            text-decoration: none;
-            transition: background 0.2s, transform 0.1s;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-        .game-btn:hover { background-color: #7a5847; transform: translateY(-2px); }
-        .game-btn:active { transform: translateY(0); }
-        .game-btn.mc { background-color: #3c8527; }
-        .game-btn.mc:hover { background-color: #4da633; }
-        .game-btn.gd { background-color: #00b4ff; }
-        .game-btn.gd:hover { background-color: #33c3ff; }
-        .game-btn.other { background-color: #8844ee; }
-        .game-btn.other:hover { background-color: #9955ff; }
-
-        /* --- EMBEDDED GAME VIEW --- */
-        #minecraftGameView {
-            max-width: 900px;
-            margin: 40px auto;
-            background: #fff;
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
-            text-align: center;
-            border: 2px solid #3c8527;
-        }
-        .iframe-container {
-            position: relative;
-            width: 100%;
-            padding-top: 56.25%; /* 16:9 Aspect Ratio */
-            margin-bottom: 20px;
-            background-color: #000;
-            border-radius: 8px;
-            overflow: hidden;
-        }
-        .iframe-container iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-
-        /* Return Button styling */
-        .return-btn {
-            display: inline-block;
-            background-color: #e06666;
-            color: white;
-            padding: 12px 24px;
-            border: none;
-            border-radius: 6px;
-            font-size: 1em;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            transition: background 0.2s;
-        }
-        .return-btn:hover { background-color: #cc0000; }
-    </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tuner – IPTV player</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;800&display=swap">
+<style>
+:root{--bg:#eceff5;--panel:#fff;--p2:#e6e9f1;--line:#d8dce8;--text:#131827;--mute:#667088;--ac:#2f5bff;--live:#ff3b5c;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0d111d;--panel:#151b2d;--p2:#1d2540;--line:#273152;--text:#e9eeff;--mute:#8a96b8;--ac:#6f8dff}}
+:root[data-theme="dark"]{--bg:#0d111d;--panel:#151b2d;--p2:#1d2540;--line:#273152;--text:#e9eeff;--mute:#8a96b8;--ac:#6f8dff}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--text);font:14px/1.45 Manrope,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased}
+button,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none}
+:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+.app{display:grid;grid-template-columns:350px 1fr;height:100%}
+aside{display:flex;flex-direction:column;min-height:0;background:var(--panel);border-right:1px solid var(--line)}
+.top{display:flex;align-items:center;gap:10px;padding:18px 16px 12px}
+.logo{flex:1;font-weight:800;font-size:22px;letter-spacing:-.03em;display:flex;align-items:center;gap:8px}
+.logo:before{content:"";width:10px;height:10px;border-radius:50%;background:var(--live)}
+.btn{padding:9px 15px;border-radius:10px;background:var(--p2);font-weight:600}
+.btn.pri{background:var(--ac);color:#fff}
+.btn:hover{filter:brightness(1.1)}
+.in{width:100%;padding:11px 14px;border-radius:10px;border:1px solid var(--line);background:var(--p2);outline:0}
+.in:focus{border-color:var(--ac)}
+.srch{margin:0 16px 10px;width:calc(100% - 32px)}
+.chips{display:flex;gap:6px;padding:0 16px 10px;overflow-x:auto;scrollbar-width:none}
+.chip{flex:none;padding:6px 13px;border-radius:99px;background:var(--p2);color:var(--mute);font-weight:600;font-size:13px}
+.chip.on{background:var(--text);color:var(--bg)}
+.list{flex:1;min-height:0;overflow-y:auto;padding:4px 8px 16px}
+.row{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:10px;cursor:pointer}
+.row:hover{background:var(--p2)}
+.row.on{background:var(--p2);box-shadow:inset 3px 0 0 var(--live)}
+.num{width:34px;text-align:right;color:var(--mute);font-weight:800;font-variant-numeric:tabular-nums;font-size:15px}
+.row.on .num{color:var(--live)}
+.nm{flex:1;min-width:0}
+.nm b{display:block;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nm small{color:var(--mute)}
+.star{padding:4px 6px;color:var(--mute);font-size:17px}
+.star.on{color:#f5b301}
+.hint{color:var(--mute);font-size:13px;margin:0}
+main{display:flex;flex-direction:column;justify-content:center;min-width:0;min-height:0;padding:28px;overflow-y:auto}
+.wrap{width:100%;max-width:1080px;margin:0 auto}
+.stage{position:relative;aspect-ratio:16/9;background:#000;border-radius:20px;overflow:hidden;box-shadow:0 24px 60px -24px rgba(5,10,30,.6)}
+video{width:100%;height:100%;display:block;background:#000}
+.ov{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:24px;background:#080b14;color:#fff}
+.ov[hidden]{display:none}
+.ov h2{margin:0 0 6px;font-size:22px;letter-spacing:-.02em}
+.ov p{margin:0 auto 16px;max-width:380px;color:#9aa6c8}
+.big{width:60px;height:60px;border-radius:50%;margin:0 auto 16px;display:grid;place-items:center;font-size:22px;background:var(--live)}
+.sp{width:34px;height:34px;margin:0 auto 14px;border:3px solid #2a3350;border-top-color:#fff;border-radius:50%;animation:s 1s linear infinite}
+@keyframes s{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.sp{animation-duration:3s}}
+.now{display:flex;align-items:center;gap:10px;margin-top:18px}
+.now div{flex:1;min-width:0}
+h1{margin:0;font-size:22px;letter-spacing:-.025em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ib{width:42px;height:42px;border-radius:12px;background:var(--panel);border:1px solid var(--line);font-size:18px}
+.ib:hover{background:var(--p2)}
+dialog{border:1px solid var(--line);border-radius:20px;background:var(--panel);color:var(--text);padding:0;width:min(520px,calc(100vw - 24px));position:fixed}
+dialog::backdrop{background:rgba(5,8,20,.65);backdrop-filter:blur(4px)}
+.tabs{display:flex;gap:4px;padding:14px 56px 0 14px;overflow-x:auto;scrollbar-width:none}
+.tab{padding:8px 12px;border-radius:10px;color:var(--mute);font-weight:600;white-space:nowrap}
+.tab.on{background:var(--p2);color:var(--text)}
+.x{position:absolute;top:12px;right:12px;width:34px;height:34px;border-radius:10px;color:var(--mute);font-size:16px}
+.pane{padding:16px 20px 20px;display:grid;gap:10px}
+.pane[hidden]{display:none}
+textarea.in{min-height:140px;resize:vertical;font:12px ui-monospace,Menlo,monospace}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--text);color:var(--bg);padding:10px 18px;border-radius:99px;font-weight:600;z-index:9;max-width:90vw;text-align:center}
+.toast[hidden]{display:none}
+@media (max-width:860px){
+.app{display:flex;flex-direction:column}
+main{order:-1;flex:none;padding:12px;overflow:visible}
+aside{flex:1;border-right:0;border-top:1px solid var(--line)}
+.stage{border-radius:14px}
+h1{font-size:18px}
+}
+</style>
 </head>
 <body>
+<div class="app">
+<aside>
+  <div class="top"><div class="logo">Tuner</div><button class="btn pri" data-add>Add channels</button></div>
+  <input class="in srch" id="q" type="search" placeholder="Search channels" aria-label="Search channels">
+  <div class="chips" id="chips"></div>
+  <div class="list" id="list"></div>
+</aside>
+<main><div class="wrap">
+  <div class="stage"><video id="v" controls playsinline></video><div class="ov" id="ov"></div></div>
+  <div class="now">
+    <div><h1 id="t">Pick a channel</h1><p class="hint" id="g">Your list is on the left.</p></div>
+    <button class="ib" id="prev" title="Previous channel" aria-label="Previous channel">‹</button>
+    <button class="ib" id="next" title="Next channel" aria-label="Next channel">›</button>
+    <button class="ib" id="fav" title="Favorite" aria-label="Favorite">☆</button>
+    <button class="ib" id="rm" title="Remove channel" aria-label="Remove channel">✕</button>
+  </div>
+</div></main>
+</div>
 
-    <!-- Score Overlay (Top Left) -->
-    <div id="scoreBoard">Score: <span id="scoreValue">0</span> 🫘</div>
+<dialog id="dlg">
+  <button class="x" data-close aria-label="Close">✕</button>
+  <div class="tabs">
+    <button class="tab on" data-p="p1">Playlist link</button>
+    <button class="tab" data-p="p2">Paste playlist</button>
+    <button class="tab" data-p="p3">Single channel</button>
+    <button class="tab" data-p="p4">Move or back up</button>
+  </div>
+  <div class="pane" id="p1">
+    <p class="hint">Paste the M3U or M3U8 link from your IPTV provider.</p>
+    <input class="in" id="pu" placeholder="https://example.com/playlist.m3u">
+    <p class="hint">If the link fails to load, open it in a new tab, copy the text, and use Paste playlist.</p>
+    <button class="btn pri" id="goUrl">Add playlist</button>
+  </div>
+  <div class="pane" id="p2" hidden>
+    <textarea class="in" id="pt" placeholder="#EXTM3U&#10;#EXTINF:-1,Channel name&#10;https://example.com/stream.m3u8"></textarea>
+    <button class="btn pri" id="goPaste">Add channels</button>
+  </div>
+  <div class="pane" id="p3" hidden>
+    <input class="in" id="n1" placeholder="Channel name">
+    <input class="in" id="u1" placeholder="Stream link (.m3u8)">
+    <input class="in" id="g1" placeholder="Group (optional)">
+    <button class="btn pri" id="goOne">Add channel</button>
+  </div>
+  <div class="pane" id="p4" hidden>
+    <p class="hint">Channels are saved in this browser. To watch on another device, copy a backup code here and paste it there.</p>
+    <button class="btn pri" id="cp">Copy backup code</button>
+    <textarea class="in" id="bk" placeholder="Paste a backup code here"></textarea>
+    <button class="btn" id="goBk">Restore from code</button>
+    <button class="btn" id="clr">Remove all channels</button>
+  </div>
+</dialog>
+<div class="toast" id="toast" hidden></div>
 
-    <!-- MAIN CONVERTER PAGE -->
-    <div id="converterPage" class="page active">
-        <div id="converterView">
-            <h2>🫘 Bean Converter</h2>
-            
-            <label for="conversionType">Conversion Mode:</label>
-            <select id="conversionType" onchange="convert()">
-                <option value="moneyToBeans">Money to Beans (3:1 Division)</option>
-                <option value="multiplyThreeToOne">Multiply (3 → 1 Option)</option>
-                <option value="divideOneToThree">Divide (1 → 3 Option)</option>
-            </select>
+<script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.13/dist/hls.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
+<script>
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const KEY="tuner.v1";
+let S={ch:[],cur:null,f:"all",q:""},hls=null,tt;
+try{const d=JSON.parse(localStorage.getItem(KEY));if(d&&Array.isArray(d.ch)){S.ch=d.ch;S.cur=d.cur}}catch(e){}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify({ch:S.ch,cur:S.cur}))}catch(e){}};
+const toast=m=>{const t=$("#toast");t.textContent=m;t.hidden=false;clearTimeout(tt);tt=setTimeout(()=>t.hidden=true,3000)};
+const get=id=>S.ch.find(c=>c.id===id);
 
-            <label for="inputValue">Enter Value:</label>
-            <input type="number" id="inputValue" placeholder="Type a number..." oninput="convert()">
+function parseM3U(t){const out=[];let m=null;
+ for(const raw of t.split(/\r?\n/)){const l=raw.trim();if(!l)continue;
+  if(l.startsWith("#EXTINF")){const a=k=>(l.match(new RegExp(k+'="([^"]*)"',"i"))||[])[1]||"";
+   const q=l.lastIndexOf('"'),c=l.indexOf(",",q<0?0:q);
+   m={name:(c>=0?l.slice(c+1).trim():"")||a("tvg-name"),group:a("group-title")||"Other"}}
+  else if(l[0]!=="#"){if(/^https?:\/\//i.test(l))out.push({name:m&&m.name||l,group:m?m.group:"Other",url:l});m=null}}
+ return out}
 
-            <div class="result">
-                Result: <span id="outputValue">0</span>
-            </div>
-        </div>
-    </div>
+function add(list){const have=new Set(S.ch.map(c=>c.url));let n=0;
+ for(const c of list){if(!c.url||have.has(c.url))continue;have.add(c.url);
+  S.ch.push({id:"c"+Math.random().toString(36).slice(2,10),name:c.name||"Untitled",group:c.group||"Other",url:c.url,fav:!!c.fav});n++}
+ save();chips();rows();return n}
 
-    <!-- ARCADE PAGE (SECRET) -->
-    <div id="arcadePage" class="page">
-        <div id="gameView">
-            <h2>🎮 Bean Arcade</h2>
-            <p>Click a game below to play.</p>
-            
-            <div class="game-grid">
-                <!-- Minecraft button modified to open embedded game view directly within the site -->
-                <button onclick="openMinecraftGame()" class="game-btn mc">⛏️ Minecraft (Classic)</button>
-                <a href="https://geometrydash.io" target="_blank" class="game-btn gd">🔺 Geometry Dash</a>
-                <a href="https://poki.com" target="_blank" class="game-btn other">🕹️ Poki Games</a>
-                <a href="https://crazygames.com" target="_blank" class="game-btn other">🚀 CrazyGames</a>
-            </div>
-            
-            <button class="return-btn" onclick="returnToConverter()">↩️ ESC to Return</button>
-        </div>
-    </div>
+const vis=()=>{let a=S.ch;if(S.f==="fav")a=a.filter(c=>c.fav);else if(S.f!=="all")a=a.filter(c=>c.group===S.f);
+ const q=S.q.trim().toLowerCase();return q?a.filter(c=>c.name.toLowerCase().includes(q)):a};
 
-    <!-- EMBEDDED MINECRAFT GAME PAGE -->
-    <div id="minecraftGamePage" class="page">
-        <div id="minecraftGameView">
-            <h2>⛏️ Minecraft Classic (Embedded Mode)</h2>
-            <div class="iframe-container">
-                <!-- Embedded HTML version of classic minecraft -->
-                <iframe src="https://classic.minecraft.net" allow="fullscreen; autoplay"></iframe>
-            </div>
-            <button class="return-btn" onclick="returnToArcade()">↩️ Back to Arcade</button>
-        </div>
-    </div>
+function chips(){const n={};S.ch.forEach(c=>n[c.group]=(n[c.group]||0)+1);
+ const g=Object.keys(n).sort((a,b)=>n[b]-n[a]).slice(0,40);
+ $("#chips").innerHTML=[["all","All"],["fav","Favorites"],...g.map(x=>[x,x])]
+  .map(([k,l])=>`<button class="chip${S.f===k?" on":""}" data-f="${esc(k)}">${esc(l)}</button>`).join("")}
 
-    <script>
-        let score = 0;
+function rows(){const a=vis(),cut=a.slice(0,250);
+ $("#list").innerHTML=cut.length?cut.map(c=>`<div class="row${c.id===S.cur?" on":""}" data-id="${c.id}"><span class="num">${S.ch.indexOf(c)+1}</span><div class="nm"><b>${esc(c.name)}</b><small>${esc(c.group)}</small></div><button class="star${c.fav?" on":""}" data-fav="${c.id}" aria-label="Favorite">${c.fav?"★":"☆"}</button></div>`).join("")
+  +(a.length>250?`<p class="hint" style="padding:10px 12px">Showing 250 of ${a.length}. Search to narrow the list.</p>`:"")
+  :`<p class="hint" style="padding:28px 16px;text-align:center">${S.ch.length?"No channels match.":"No channels yet. Add a playlist to start watching."}</p>`}
 
-        // Converter Logic
-        function convert() {
-            const input = parseFloat(document.getElementById('inputValue').value);
-            const type = document.getElementById('conversionType').value;
-            const output = document.getElementById('outputValue');
+function ov(k){const o=$("#ov");o.hidden=!k;if(!k)return;
+ const M={empty:["Add your first channel","Paste an IPTV playlist link or a single stream link and it will show up here."],load:["Tuning in…",""],err:["This channel won’t play","It may be offline, blocked by the provider, or served over http while this page is https. Try another channel."]}[k];
+ o.innerHTML="<div>"+(k==="load"?'<div class="sp"></div>':`<div class="big">${k==="err"?"!":"▶"}</div>`)+`<h2>${M[0]}</h2><p>${M[1]}</p>`
+  +(k==="empty"?'<button class="btn pri" data-add>Add channels</button>':k==="err"?'<button class="btn" data-retry>Try again</button>':"")+"</div>"}
 
-            if (isNaN(input)) {
-                output.innerText = '0';
-                return;
-            }
+function stop(){if(hls){hls.destroy();hls=null}const v=$("#v");v.pause();v.removeAttribute("src");v.load()}
 
-            if (type === 'moneyToBeans' || type === 'divideOneToThree') {
-                output.innerText = (input / 3).toFixed(2).replace(/\.00\$/, '');
-            } else if (type === 'multiplyThreeToOne') {
-                output.innerText = (input * 3).toFixed(2).replace(/\.00\$/, '');
-            }
-        }
+function play(id){const c=get(id);if(!c){S.cur=null;stop();ov("empty");$("#t").textContent="Pick a channel";$("#g").textContent="Your list is on the left.";return}
+ S.cur=id;save();rows();$("#t").textContent=c.name;$("#g").textContent=c.group;$("#fav").textContent=c.fav?"★":"☆";
+ stop();ov("load");
+ const v=$("#v"),u=c.url,go=()=>v.play().catch(()=>{});
+ if(!/\.(mp4|webm|ogv)(\?|$)/i.test(u)&&window.Hls&&Hls.isSupported()){
+  hls=new Hls({lowLatencyMode:true});
+  hls.on(Hls.Events.ERROR,(e,d)=>{if(d.fatal)ov("err")});
+  hls.on(Hls.Events.MANIFEST_PARSED,go);
+  hls.loadSource(u);hls.attachMedia(v)}
+ else{v.src=u;go()}}
 
-        // Functions to switch views
-        function hideAllPages() {
-            document.getElementById('converterPage').classList.remove('active');
-            document.getElementById('arcadePage').classList.remove('active');
-            document.getElementById('minecraftGamePage').classList.remove('active');
-        }
+const step=d=>{const a=vis();if(!a.length)return;const i=a.findIndex(c=>c.id===S.cur);play(a[(i+d+a.length)%a.length].id)};
+const v=$("#v");
+["playing","canplay"].forEach(e=>v.addEventListener(e,()=>S.cur&&ov(null)));
+v.addEventListener("error",()=>{if(v.error&&S.cur)ov("err")});
 
-        function returnToConverter() {
-            hideAllPages();
-            document.getElementById('converterPage').classList.add('active');
-        }
+function fav(id){const c=get(id);if(!c)return;c.fav=!c.fav;save();rows();if(id===S.cur)$("#fav").textContent=c.fav?"★":"☆"}
+function done(L){const n=add(L);if(!L.length){toast("No channels found. Check the link or text.");return}
+ toast(n?`Added ${n} channel${n===1?"":"s"}`:"Those channels are already in your list.");$("#dlg").close();if(!S.cur&&S.ch.length)play(S.ch[0].id)}
 
-        function openArcade() {
-            hideAllPages();
-            document.getElementById('arcadePage').classList.add('active');
-        }
+document.addEventListener("click",e=>{const t=e.target;let x;
+ if(x=t.closest("[data-fav]"))return fav(x.dataset.fav);
+ if(x=t.closest(".row"))return play(x.dataset.id);
+ if(x=t.closest("[data-f]")){S.f=x.dataset.f;chips();return rows()}
+ if(t.closest("[data-add]"))return $("#dlg").showModal();
+ if(t.closest("[data-close]"))return $("#dlg").close();
+ if(t.closest("[data-retry]"))return play(S.cur);
+ if(x=t.closest(".tab")){document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("on",b===x));
+  document.querySelectorAll(".pane").forEach(p=>p.hidden=p.id!==x.dataset.p)}});
 
-        function openMinecraftGame() {
-            hideAllPages();
-            document.getElementById('minecraftGamePage').classList.add('active');
-        }
+$("#q").oninput=e=>{S.q=e.target.value;rows()};
+$("#prev").onclick=()=>step(-1);$("#next").onclick=()=>step(1);
+$("#fav").onclick=()=>S.cur&&fav(S.cur);
+$("#rm").onclick=()=>{if(!S.cur)return;S.ch=S.ch.filter(c=>c.id!==S.cur);save();chips();rows();play(null)};
+document.addEventListener("keydown",e=>{if(e.target.matches("input,textarea")||$("#dlg").open)return;
+ if(e.key==="ArrowUp"){e.preventDefault();step(-1)}if(e.key==="ArrowDown"){e.preventDefault();step(1)}});
 
-        function returnToArcade() {
-            hideAllPages();
-            document.getElementById('arcadePage').classList.add('active');
-        }
+$("#goUrl").onclick=async()=>{const u=$("#pu").value.trim();if(!u)return;toast("Loading playlist…");
+ try{const r=await fetch(u);if(!r.ok)throw 0;done(parseM3U(await r.text()))}
+ catch(e){toast("Couldn’t load that link. Open it in a tab and use Paste playlist.")}};
+$("#goPaste").onclick=()=>{const t=$("#pt").value;if(t.trim()){done(parseM3U(t));$("#pt").value=""}};
+$("#goOne").onclick=()=>{const u=$("#u1").value.trim();if(!/^https?:\/\//i.test(u))return toast("Enter a stream link that starts with http:// or https://");
+ add([{name:$("#n1").value.trim()||"Untitled",group:$("#g1").value.trim()||"My channels",url:u}]);
+ const c=S.ch.find(x=>x.url===u);["#n1","#u1","#g1"].forEach(s=>$(s).value="");$("#dlg").close();if(c)play(c.id)};
+$("#cp").onclick=async()=>{const code=btoa(unescape(encodeURIComponent(JSON.stringify(S.ch))));
+ try{await navigator.clipboard.writeText(code);toast("Backup code copied")}
+ catch(e){$("#bk").value=code;$("#bk").select();toast("Copy the code from the box")}};
+$("#goBk").onclick=()=>{try{const L=JSON.parse(decodeURIComponent(escape(atob($("#bk").value.trim()))));done(L)}
+ catch(e){toast("That code doesn’t look right.")}};
+let armed=0;$("#clr").onclick=function(){if(!armed){armed=1;this.textContent="Tap again to remove everything";setTimeout(()=>{armed=0;this.textContent="Remove all channels"},3500);return}
+ armed=0;this.textContent="Remove all channels";S.ch=[];save();chips();rows();play(null);$("#dlg").close();toast("All channels removed")};
 
-        // Keyboard Controls (P and Escape)
-        window.addEventListener('keydown', function(event) {
-            // Ignore keystrokes if typing inside the input box
-            if (document.activeElement.tagName === 'INPUT') {
-                if (event.key.toLowerCase() === 'p') return; 
-            }
+chips();rows();
+async function loadConfig(){try{
+ const r=await fetch("config.yml",{cache:"no-store"});if(!r.ok||!window.jsyaml)return;
+ const c=jsyaml.load(await r.text());if(!c||typeof c!=="object")return;
+ let n=0;
+ if(Array.isArray(c.channels))n+=add(c.channels.filter(x=>x&&/^https?:\/\//i.test(x.url)));
+ for(const u of Array.isArray(c.playlists)?c.playlists:[]){try{const p=await fetch(u);if(p.ok)n+=add(parseM3U(await p.text()))}catch(e){}}
+ if(n){toast(`Loaded ${n} channel${n===1?"":"s"} from config.yml`);if(!S.cur)play(S.ch[0].id)}
+}catch(e){}}
 
-            if (event.key.toLowerCase() === 'p') {
-                openArcade();
-            }
-            if (event.key === 'Escape' || event.key === 'Esc') {
-                // If we are looking at Minecraft, ESC goes back to Arcade first. If in Arcade, ESC goes back to Converter.
-                if (document.getElementById('minecraftGamePage').classList.contains('active')) {
-                    returnToArcade();
-                } else if (document.getElementById('arcadePage').classList.contains('active')) {
-                    returnToConverter();
-                }
-            }
-        });
-
-        // Falling & Clickable Beans Logic
-        function createBean() {
-            const bean = document.createElement('div');
-            bean.classList.add('falling-bean');
-            bean.innerText = '🫘';
-            
-            bean.style.left = Math.random() * 95 + 'vw';
-            
-            const fallDuration = Math.random() * 6 + 6;
-            const spinDuration = Math.random() * 4 + 4;
-            
-            bean.style.animationDuration = `${fallDuration}s, ${spinDuration}s`;
-            if (Math.random() > 0.5) {
-                bean.style.animationDirection = 'normal, reverse';
-            }
-
-            // Click Handler
-            bean.addEventListener('mousedown', function() {
-                score++;
-                document.getElementById('scoreValue').innerText = score;
-                bean.style.transform = 'scale(0)';
-                setTimeout(() => bean.remove(), 100);
-            });
-
-            document.body.appendChild(bean);
-
-            setTimeout(() => {
-                if (bean.parentNode) bean.remove();
-            }, fallDuration * 1000);
-        }
-
-        setInterval(createBean, 800);
-    </script>
-
+if(S.cur&&get(S.cur))play(S.cur);else{S.cur=null;ov("empty")}
+loadConfig();
+</script>
 </body>
 </html>
